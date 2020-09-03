@@ -14,15 +14,16 @@ module.exports = {
   plugins: ['node', 'security', ...basePlugins],
   extends: ['plugin:node/recommended', 'plugin:security/recommended', ...baseExtends],
   rules: {
-    'prettier/prettier': ['warn'],
-    'no-template-curly-in-string': ['error'],
-    'prefer-template': ['warn'],
-    'require-jsdoc': ['off'],
+    curly: ['error', 'multi-or-nest', 'consistent'],
+    eqeqeq: ['error', 'always'],
     'new-cap': ['warn', {capIsNewExceptions: ['Router']}],
     'no-debugger': ['warn'],
+    'no-template-curly-in-string': ['error'],
+    'no-unused-vars': ['error', {varsIgnorePattern: '_'}],
+    'prefer-template': ['warn'],
+    'prettier/prettier': ['warn'],
+    'require-jsdoc': ['off'],
     'vars-on-top': ['warn'],
-    eqeqeq: ['error', 'always'],
-    curly: ['error', 'multi-or-nest', 'consistent'],
   },
   overrides: [
     {
@@ -44,11 +45,6 @@ module.exports = {
       plugins: ['compat', ...basePlugins],
       env: {browser: true, ...baseEnv},
       extends: ['plugin:compat/recommended', ...basePlugins],
-      rules: {
-        'no-var': ['off'],
-        'vars-on-top': ['off'],
-        'prettier/prettier': ['off'],
-      },
     },
   ],
   parserOptions: {

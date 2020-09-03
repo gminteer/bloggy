@@ -1,6 +1,6 @@
 const router = require('express').Router();
 
-module.exports = ({User, Post}) => {
+module.exports = ({User}) => {
   // GET /
   router.get('/', async (_, res) => {
     try {
@@ -12,6 +12,7 @@ module.exports = ({User, Post}) => {
       return res.status(500).json(err);
     }
   });
+
   // GET /1
   router.get('/:id', async (req, res) => {
     try {
@@ -27,15 +28,18 @@ module.exports = ({User, Post}) => {
       return res.status(500).json(err);
     }
   });
+
   // POST /
   router.post('/', async (req, res) => {
+    if (req.session.isLoggedIn)
+      return res.status(400).json({message: "Can't create user, already logged in"});
     try {
       const {username, password, email} = req.body;
       const user = await User.create({username, password, email});
       req.session.save(() => {
         req.session.userId = user.id;
         req.session.username = user.username;
-        req.session.loggedIn = true;
+        req.session.isLoggedIn = true;
         const {id, username, email} = user;
         return res
           .status(201)
@@ -58,8 +62,10 @@ module.exports = ({User, Post}) => {
       }
     }
   });
+
   // POST /login
   router.post('/login', async (req, res) => {
+    if (req.session.isLoggedIn) return res.status(400).json({message: 'Already logged in'});
     try {
       const {username, password} = req.body;
       const user = await User.findOne({where: {username}});
@@ -71,7 +77,7 @@ module.exports = ({User, Post}) => {
       req.session.save(() => {
         req.session.userId = id;
         req.session.username = username;
-        req.session.loggedIn = true;
+        req.session.isLoggedIn = true;
         return res.json({user: {id, username, email}, message: 'Login successful.'});
       });
     } catch (err) {
@@ -79,13 +85,16 @@ module.exports = ({User, Post}) => {
       return res.status(500).json(err);
     }
   });
+
   // POST /logout
   router.post('/logout', (req, res) => {
-    if (req.session.loggedIn) req.session.destroy(() => res.redirect('/'));
+    if (req.session.isLoggedIn) req.session.destroy(() => res.sendStatus(204));
     else return res.sendStatus(400);
   });
+
   // PUT /1
   router.put('/:id', async (req, res) => {
+    if (req.params.id !== req.session.userId.toString()) return res.sendStatus(403);
     try {
       const {username, password, email} = req.body;
       if (!username && !password && !email) return res.sendStatus(400);
@@ -114,22 +123,19 @@ module.exports = ({User, Post}) => {
       }
     }
   });
+
   // DELETE /1
   router.delete('/:id', async (req, res) => {
+    if (req.params.id !== req.session.userId.toString()) return res.sendStatus(403);
     try {
-      const user = await User.findOne({
-        where: req.params,
-        attributes: {exclude: ['password']},
-      });
       const deletedCount = await User.destroy({where: req.params});
       if (!deletedCount)
         return res.status(404).json({message: `No user found with id: "${req.params.id}"`});
-      return res.status(200).json({message: 'Delete successful', user: user.get()});
+      req.session.destroy(() => res.sendStatus(204));
     } catch (err) {
       console.error(err);
       return res.status(500).json(err);
     }
   });
   return router;
-  //
 };
