@@ -1,6 +1,6 @@
 const router = require('express').Router();
 
-module.exports = ({User, Post, Vote, Comment}) => {
+module.exports = ({User, Post}) => {
   // GET /
   router.get('/', async (_, res) => {
     try {
@@ -8,7 +8,7 @@ module.exports = ({User, Post, Vote, Comment}) => {
       if (users.length < 1) return res.status(404).json({message: 'No users in database'});
       return res.json(users);
     } catch (err) {
-      console.log(err);
+      console.error(err);
       return res.status(500).json(err);
     }
   });
@@ -23,7 +23,7 @@ module.exports = ({User, Post, Vote, Comment}) => {
         return res.status(404).json({message: `No user found with id: "${req.params.id}"`});
       return res.json(user);
     } catch (err) {
-      console.log(err);
+      console.error(err);
       return res.status(500).json(err);
     }
   });
@@ -47,7 +47,15 @@ module.exports = ({User, Post, Vote, Comment}) => {
         res.status(422);
       else res.status(500);
       console.error(err);
-      return res.json(err);
+      if (err.errors) {
+        const errors = err.errors.map((error) => {
+          const {instance: _, ...sanitized} = error;
+          return sanitized;
+        });
+        return res.json(errors);
+      } else {
+        return res.json(err);
+      }
     }
   });
   // POST /login
@@ -67,7 +75,7 @@ module.exports = ({User, Post, Vote, Comment}) => {
         return res.json({user: {id, username, email}, message: 'Login successful.'});
       });
     } catch (err) {
-      console.log(err);
+      console.error(err);
       return res.status(500).json(err);
     }
   });
@@ -80,31 +88,45 @@ module.exports = ({User, Post, Vote, Comment}) => {
   router.put('/:id', async (req, res) => {
     try {
       const {username, password, email} = req.body;
-      const update = {};
-      if (username) update.username = username;
-      if (password) update.password = password;
-      if (email) update.email = email;
-      const [changedCount] = await User.update(update, {individualHooks: true, where: req.params});
-      if (!changedCount)
+      if (!username && !password && !email) return res.sendStatus(400);
+      const user = await User.findOne({where: req.params});
+      if (!user)
         return res.status(404).json({message: `No user found with id: "${req.params.id}"`});
-      return res.sendStatus(204);
+      if (username) user.username = username;
+      if (password) user.password = password;
+      if (email) user.email = email;
+      await user.save();
+      const {password: _, ...sanitized} = user.get();
+      return res.status(200).json({message: 'Update successful', user: sanitized});
     } catch (err) {
       if (['SequelizeUniqueConstraintError', 'SequelizeValidationError'].includes(err.name))
         res.status(422);
       else res.status(500);
-      console.log(err);
-      return res.json(err);
+      console.error(err);
+      if (err.errors) {
+        const errors = err.errors.map((error) => {
+          const {instance: _, ...sanitized} = error;
+          return sanitized;
+        });
+        return res.json(errors);
+      } else {
+        return res.json(err);
+      }
     }
   });
   // DELETE /1
   router.delete('/:id', async (req, res) => {
     try {
-      const {id} = req.params;
-      const [changedCount] = await User.destroy({where: {id}});
-      if (!changedCount) return res.status(404).json({message: `No user found with id: "${id}"`});
-      return res.sendStatus(204);
+      const user = await User.findOne({
+        where: req.params,
+        attributes: {exclude: ['password']},
+      });
+      const deletedCount = await User.destroy({where: req.params});
+      if (!deletedCount)
+        return res.status(404).json({message: `No user found with id: "${req.params.id}"`});
+      return res.status(200).json({message: 'Delete successful', user: user.get()});
     } catch (err) {
-      console.log(err);
+      console.error(err);
       return res.status(500).json(err);
     }
   });
