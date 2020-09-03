@@ -7,7 +7,7 @@ module.exports = (sequelize) =>
     {
       id: {type: DataTypes.INTEGER, allowNull: false, primaryKey: true, autoIncrement: true},
       title: {type: DataTypes.STRING, allowNull: false},
-      postUrl: {type: DataTypes.STRING, allowNull: false, validate: {isUrl: true}},
+      body: {type: DataTypes.TEXT, allowNull: false, validate: {len: [1]}},
       userId: {type: DataTypes.INTEGER, references: {model: 'user', key: 'id'}},
     },
     {
