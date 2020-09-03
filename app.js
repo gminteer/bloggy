@@ -14,7 +14,7 @@ module.exports = (sequelize) => {
     secret: 'This is secret?',
     cookie: {},
     resave: false,
-    saveUnitialized: true,
+    saveUninitialized: true,
     store: new SequelizeStore({db: sequelize}),
   };
 
