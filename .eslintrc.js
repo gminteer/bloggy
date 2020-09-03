@@ -1,6 +1,6 @@
 const devDependencies = Object.keys(require('./package.json').devDependencies) || {};
 const baseEnv = {es2017: true};
-const basePlugins = ['prettier', 'promise', 'import'];
+const basePlugins = ['prettier'];
 const baseExtends = [
   'eslint:recommended',
   'plugin:promise/recommended',
@@ -21,7 +21,6 @@ module.exports = {
     'new-cap': ['warn', {capIsNewExceptions: ['Router']}],
     'no-debugger': ['warn'],
     'vars-on-top': ['warn'],
-    'brace-style': ['error', '1tbs', {allowSingleLine: true}],
     eqeqeq: ['error', 'always'],
     curly: ['error', 'multi-or-nest', 'consistent'],
   },
@@ -30,7 +29,12 @@ module.exports = {
       files: ['__tests__/**/*', '__mocks__/**/*', 'test/**/*', 'util/**/*'],
       env: {node: true, 'jest/globals': true, ...baseEnv},
       plugins: ['node', 'jest', ...basePlugins],
-      extends: ['plugin:node/recommended', 'plugin:jest/recommended', 'plugin:jest/style', ...baseExtends],
+      extends: [
+        'plugin:node/recommended',
+        'plugin:jest/recommended',
+        'plugin:jest/style',
+        ...baseExtends,
+      ],
       rules: {
         'node/no-unpublished-require': ['error', {allowModules: devDependencies}],
       },
