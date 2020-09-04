@@ -1,19 +1,31 @@
 const router = require('express').Router();
 
+function handleErr(req, res, err) {
+  console.error(err);
+  if (['SequelizeUniqueConstraintError', 'SequelizeValidationError'].includes(err.name)) {
+    const errors = err.errors.map((error) => {
+      const {instance: _, ...sanitizedError} = error;
+      return sanitizedError;
+    });
+    return res.status(422).json(errors);
+  }
+  if (process.env.NODE_ENV !== 'production') return res.status(500).json(err);
+  else return res.sendStatus(500);
+}
+
 module.exports = ({User}) => {
-  // GET /
+  // GET / (get all users)
   router.get('/', async (_, res) => {
     try {
       const users = await User.findAll({attributes: {exclude: ['password']}});
       if (users.length < 1) return res.status(404).json({message: 'No users in database'});
       return res.json(users);
     } catch (err) {
-      console.error(err);
-      return res.status(500).json(err);
+      handleErr(err);
     }
   });
 
-  // GET /1
+  // GET /1 (get one user)
   router.get('/:id', async (req, res) => {
     try {
       const user = await User.findOne({
@@ -24,46 +36,32 @@ module.exports = ({User}) => {
         return res.status(404).json({message: `No user found with id: "${req.params.id}"`});
       return res.json(user);
     } catch (err) {
-      console.error(err);
-      return res.status(500).json(err);
+      handleErr(err);
     }
   });
 
-  // POST /
+  // POST / (create a user)
   router.post('/', async (req, res) => {
-    if (req.session.isLoggedIn)
-      return res.status(400).json({message: "Can't create user, already logged in"});
+    if (req.session.isLoggedIn) return res.status(400).json({message: 'Already logged in'});
     try {
-      const {username, password, email} = req.body;
-      const user = await User.create({username, password, email});
+      const {username, password} = req.body;
+      const user = await User.create({username, password});
       req.session.save(() => {
-        req.session.userId = user.id;
-        req.session.username = user.username;
+        const {id, username} = user;
+        req.session.user_id = id;
+        req.session.username = username;
         req.session.isLoggedIn = true;
-        const {id, username, email} = user;
         return res
           .status(201)
           .append('Location', id)
-          .json({user: {id, username, email}, message: 'Login successful.'});
+          .json({user: {id, username}, message: 'Login successful.'});
       });
     } catch (err) {
-      if (['SequelizeUniqueConstraintError', 'SequelizeValidationError'].includes(err.name))
-        res.status(422);
-      else res.status(500);
-      console.error(err);
-      if (err.errors) {
-        const errors = err.errors.map((error) => {
-          const {instance: _, ...sanitized} = error;
-          return sanitized;
-        });
-        return res.json(errors);
-      } else {
-        return res.json(err);
-      }
+      handleErr(err);
     }
   });
 
-  // POST /login
+  // POST /login (login as user)
   router.post('/login', async (req, res) => {
     if (req.session.isLoggedIn) return res.status(400).json({message: 'Already logged in'});
     try {
@@ -73,68 +71,60 @@ module.exports = ({User}) => {
         return res.status(404).json({message: `No user found with username: "${username}"`});
       const isValidPassword = await user.checkPassword(password);
       if (!isValidPassword) return res.status(403).json({message: 'Invalid password.'});
-      const {id, email} = user;
+      const {id} = user;
       req.session.save(() => {
-        req.session.userId = id;
+        req.session.user_id = id;
         req.session.username = username;
         req.session.isLoggedIn = true;
-        return res.json({user: {id, username, email}, message: 'Login successful.'});
+        return res.json({user: {id, username}, message: 'Login successful.'});
       });
     } catch (err) {
-      console.error(err);
-      return res.status(500).json(err);
+      handleErr(err);
     }
   });
 
-  // POST /logout
+  // POST /logout (logout)
   router.post('/logout', (req, res) => {
     if (req.session.isLoggedIn) req.session.destroy(() => res.sendStatus(204));
     else return res.sendStatus(400);
   });
 
-  // PUT /1
+  // PUT /1 (change a user)
   router.put('/:id', async (req, res) => {
-    if (req.params.id !== req.session.userId.toString()) return res.sendStatus(403);
+    if (req.params.id !== req.session.user_id.toString()) return res.sendStatus(403);
     try {
-      const {username, password, email} = req.body;
-      if (!username && !password && !email) return res.sendStatus(400);
+      const {username, password} = req.body;
+      if (!username && !password) return res.sendStatus(400);
       const user = await User.findOne({where: req.params});
       if (!user)
         return res.status(404).json({message: `No user found with id: "${req.params.id}"`});
       if (username) user.username = username;
       if (password) user.password = password;
-      if (email) user.email = email;
       await user.save();
-      const {password: _, ...sanitized} = user.get();
-      return res.status(200).json({message: 'Update successful', user: sanitized});
+      const {password: _, ...sanitizedUser} = user.get();
+      return res.status(200).json({message: 'Update successful', user: sanitizedUser});
     } catch (err) {
-      if (['SequelizeUniqueConstraintError', 'SequelizeValidationError'].includes(err.name))
-        res.status(422);
-      else res.status(500);
-      console.error(err);
-      if (err.errors) {
-        const errors = err.errors.map((error) => {
-          const {instance: _, ...sanitized} = error;
-          return sanitized;
-        });
-        return res.json(errors);
-      } else {
-        return res.json(err);
-      }
+      handleErr(err);
     }
   });
 
-  // DELETE /1
+  // DELETE /1 (delete a user)
   router.delete('/:id', async (req, res) => {
-    if (req.params.id !== req.session.userId.toString()) return res.sendStatus(403);
+    if (req.params.id !== req.session.user_id.toString()) return res.sendStatus(403);
     try {
       const deletedCount = await User.destroy({where: req.params});
-      if (!deletedCount)
-        return res.status(404).json({message: `No user found with id: "${req.params.id}"`});
+      if (!deletedCount) {
+        if (process.env.NODE_ENV !== 'production') {
+          return res.status(500).json({
+            message: `No user found with id: "${req.params.id}", but id matches currently logged in user. Something went horribly wrong :(`,
+          });
+        } else {
+          return res.sendStatus(500);
+        }
+      }
       req.session.destroy(() => res.sendStatus(204));
     } catch (err) {
-      console.error(err);
-      return res.status(500).json(err);
+      handleErr(err);
     }
   });
   return router;

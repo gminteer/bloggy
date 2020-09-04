@@ -14,6 +14,7 @@ module.exports = {
   plugins: ['node', 'security', ...basePlugins],
   extends: ['plugin:node/recommended', 'plugin:security/recommended', ...baseExtends],
   rules: {
+    camelcase: ['off'],
     curly: ['error', 'multi-or-nest', 'consistent'],
     eqeqeq: ['error', 'always'],
     'new-cap': ['warn', {capIsNewExceptions: ['Router']}],

@@ -8,8 +8,8 @@ module.exports = (sequelize) =>
       id: {type: DataTypes.INTEGER, allowNull: false, primaryKey: true, autoIncrement: true},
       title: {type: DataTypes.STRING, allowNull: false},
       body: {type: DataTypes.TEXT, allowNull: false, validate: {len: [1]}},
-      userId: {type: DataTypes.INTEGER, allowNull: false, references: {model: 'user', key: 'id'}},
-      parentId: {type: DataTypes.INTEGER, allowNull: true, references: {model: 'post', key: 'id'}},
+      user_id: {type: DataTypes.INTEGER, allowNull: false, references: {model: 'user', key: 'id'}},
+      parent_id: {type: DataTypes.INTEGER, allowNull: true, references: {model: 'post', key: 'id'}},
     },
     {
       sequelize,
