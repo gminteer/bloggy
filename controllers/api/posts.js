@@ -1,21 +1,39 @@
 const router = require('express').Router();
 
 module.exports = ({User, Post}) => {
+  // there's probably a better way to do this
+  const includeComment = () => ({
+    model: Post,
+    as: 'comments',
+    foreignKey: 'parent_id',
+    attributes: ['id', 'title', 'body', 'created_at'],
+    include: [{model: User, attributes: ['username']}],
+  });
+  /**
+   * nests comment include blocks (up to depth)
+   * @param {number} depth how many levels of comments should be included
+   * @return {object} a sequelize include parameter
+   */
+  function getComments(depth) {
+    let out = '';
+    for (let i = 0; i < depth; i++) {
+      if (out) {
+        const nested = includeComment();
+        nested.include.push(out);
+        out = nested;
+      } else {
+        out = includeComment();
+      }
+    }
+    return out;
+  }
+
   // GET / (get all top level posts)
-  router.get('/', async (_, res) => {
+  router.get('/', async (req, res) => {
     try {
       const posts = await Post.findAll({
         attributes: ['id', 'title', 'body', 'created_at'],
-        include: [
-          {model: User, attributes: ['username']},
-          {
-            model: Post,
-            as: 'comments',
-            foreignKey: 'parent_id',
-            attributes: ['id', 'title', 'body', 'created_at'],
-            include: {model: User, attributes: ['username']},
-          },
-        ],
+        include: [{model: User, attributes: ['username']}],
         where: {parent_id: null},
       });
       if (posts.length < 1) return res.status(404).json({message: 'No posts in database'});
@@ -26,17 +44,18 @@ module.exports = ({User, Post}) => {
     }
   });
 
-  // GET /1 (get a specific post and its direct comments)
+  // GET /1 (get a specific post and related comments, up to depth (hard capped at 6))
   router.get('/:id', async (req, res) => {
     try {
-      const post = await Post.findOne({
+      const commentDepth = req.query.comment_depth
+        ? Math.min(Number(req.query.comment_depth), 6)
+        : 6;
+      const query = {
         where: req.params,
         attributes: ['id', 'title', 'body', 'created_at'],
-        include: [
-          {model: User, attributes: ['username']},
-          {model: Post, foreignKey: 'parent_id', include: {model: User, attributes: ['username']}},
-        ],
-      });
+        include: [{model: User, attributes: ['username']}, getComments(commentDepth)],
+      };
+      const post = await Post.findOne(query);
       if (!post)
         return res.status(404).json({message: `No post found with id: "${req.params.id}"`});
       return res.json(post);
