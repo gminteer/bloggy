@@ -1,6 +1,6 @@
 const router = require('express').Router();
 
-module.exports = ({userSvc}, handleErr) => {
+module.exports = ({userSvc}, {auth}, handleErr) => {
   // GET / (get all users)
   router.get('/', async (_, res) => {
     try {
@@ -25,15 +25,13 @@ module.exports = ({userSvc}, handleErr) => {
   });
 
   // POST / (create a user)
-  router.post('/', async (req, res) => {
-    if (req.session.isLoggedIn) return res.status(400).json({message: 'Already logged in'});
+  router.post('/', auth.mustNotBeLoggedIn, async (req, res) => {
     try {
       const {username, password} = req.body;
       const user = await userSvc.create(username, password);
       req.session.save(() => {
         const {id, username} = user;
-        req.session.user_id = id;
-        req.session.username = username;
+        req.session.user = user;
         req.session.isLoggedIn = true;
         return res
           .status(201)
@@ -46,8 +44,7 @@ module.exports = ({userSvc}, handleErr) => {
   });
 
   // POST /login (login as user)
-  router.post('/login', async (req, res) => {
-    if (req.session.isLoggedIn) return res.status(400).json({message: 'Already logged in'});
+  router.post('/login', auth.mustNotBeLoggedIn, async (req, res) => {
     try {
       const {username, password} = req.body;
       const login = await userSvc.login(username, password);
@@ -70,15 +67,13 @@ module.exports = ({userSvc}, handleErr) => {
   });
 
   // POST /logout (logout)
-  router.post('/logout', (req, res) => {
-    if (req.session.isLoggedIn) req.session.destroy(() => res.sendStatus(204));
-    else return res.status(400).json({message: 'Not logged in'});
+  router.post('/logout', auth.mustBeLoggedIn, (req, res) => {
+    req.session.destroy(() => res.sendStatus(204));
   });
 
   // PUT /1 (change a user)
-  router.put('/:id', async (req, res) => {
+  router.put('/:id', auth.mustOwnEndpoint, async (req, res) => {
     const {id} = req.params;
-    if (id !== req.session.user_id.toString()) return res.sendStatus(403);
     try {
       const {username, password} = req.body;
       if (!username && !password) return res.status(400).json({message: 'Nothing to update'});
@@ -91,9 +86,8 @@ module.exports = ({userSvc}, handleErr) => {
   });
 
   // DELETE /1 (delete a user)
-  router.delete('/:id', async (req, res) => {
+  router.delete('/:id', auth.mustOwnEndpoint, async (req, res) => {
     const {id} = req.params;
-    if (id !== req.session.user_id.toString()) return res.sendStatus(403);
     try {
       const user = await userSvc.delete(id);
       if (!user) {

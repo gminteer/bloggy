@@ -4,12 +4,14 @@ const path = require('path');
 const session = require('express-session');
 const SequelizeStore = require('connect-session-sequelize')(session.Store);
 
+const app = express();
+const hbs = exphbs.create();
+
 module.exports = (sequelize) => {
-  const app = express();
-  const hbs = exphbs.create();
   const models = require('./models')(sequelize);
   const services = require('./services')(models, sequelize);
-  const routes = require('./controllers')(services);
+  const middleware = require('./middleware')(services);
+  const routes = require('./controllers')(services, middleware);
 
   app.use(
     session({

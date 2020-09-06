@@ -31,13 +31,13 @@ module.exports = ({User, Post}) => {
       if (!id) {
         return Post.findAll({
           where: {parent_id: null},
-          attributes: ['id', 'title', 'body', 'created_at'],
+          attributes: ['id', 'user_id', 'title', 'body', 'created_at'],
           include: [{model: User, attributes: ['username']}],
         });
       }
       const params = {
         where: {id},
-        attributes: ['id', 'title', 'body', 'created_at'],
+        attributes: ['id', 'user_id', 'title', 'body', 'created_at'],
         include: [{model: User, attributes: ['username']}],
       };
       if (depth) params.include.push(getComments(depth));
@@ -56,7 +56,7 @@ module.exports = ({User, Post}) => {
       return post;
     },
     async delete(id) {
-      const post = Post.findOne({where: {id}});
+      const post = await Post.findOne({where: {id}});
       if (!post) return;
       await post.destroy();
       return post;

@@ -16,8 +16,8 @@ function handleErr(req, res, err) {
   else return res.sendStatus(500);
 }
 
-module.exports = (services) => {
-  router.use('/users', require('./user')(services, handleErr));
-  router.use('/posts', require('./post')(services, handleErr));
+module.exports = (services, middleware) => {
+  router.use('/users', require('./user')(services, middleware, handleErr));
+  router.use('/posts', require('./post')(services, middleware, handleErr));
   return router;
 };

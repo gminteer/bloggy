@@ -1,6 +1,6 @@
 const router = require('express').Router();
 
-module.exports = ({postSvc}, handleErr) => {
+module.exports = ({postSvc}, {auth}, handleErr) => {
   // GET / (get all top level posts)
   router.get('/', async (req, res) => {
     try {
@@ -27,11 +27,10 @@ module.exports = ({postSvc}, handleErr) => {
     }
   });
   // POST / (create a top level post)
-  router.post('/', async (req, res) => {
-    if (!req.session.isLoggedIn) return res.status(403).json({message: 'Not logged in'});
+  router.post('/', auth.mustBeLoggedIn, async (req, res) => {
     try {
       const {title, body} = req.body;
-      const {user_id} = req.session;
+      const user_id = req.session.user.id;
       const post = await postSvc.create({user_id, title, body});
       return res.json(post);
     } catch (err) {
@@ -39,11 +38,10 @@ module.exports = ({postSvc}, handleErr) => {
     }
   });
   // POST /1 (create a comment (post with a parent post))
-  router.post('/:id', async (req, res) => {
-    if (!req.session.isLoggedIn) return res.status(403).json({message: 'Not logged in'});
+  router.post('/:id', auth.mustBeLoggedIn, async (req, res) => {
     try {
       const {title, body} = req.body;
-      const {user_id} = req.session;
+      const user_id = req.session.user.id;
       const parent_id = req.params.id;
       const post = await postSvc.create({title, body, user_id, parent_id});
       return res.json(post);
@@ -52,10 +50,11 @@ module.exports = ({postSvc}, handleErr) => {
     }
   });
   // PUT /1 (change a post)
-  router.put('/:id', async (req, res) => {
+  router.put('/:id', auth.mustOwnPost, async (req, res) => {
     try {
-      const {title, body} = req.body;
       const {id} = req.params;
+      const {title, body} = req.body;
+      if (!title && !body) return res.status(400).json({message: 'Nothing to update'});
       const post = await postSvc.update(id, title, body);
       if (!post) return res.status(404).json({message: `No post found with id: "${id}"`});
       return res.status(200).json({message: 'Post updated successfully', post});
@@ -64,7 +63,7 @@ module.exports = ({postSvc}, handleErr) => {
     }
   });
   // DELETE /1 (delete a post)
-  router.delete('/:id', async (req, res) => {
+  router.delete('/:id', auth.mustOwnPost, async (req, res) => {
     try {
       const {id} = req.params;
       const post = await postSvc.delete(id);
