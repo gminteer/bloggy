@@ -1,10 +1,7 @@
 module.exports = ({User}) => ({
-  getAll() {
-    return User.findAll({attributes: {exlclude: ['password']}});
-  },
-
-  getOne(id) {
-    return User.findOne({attributes: {exlclude: ['password']}, where: {id}});
+  get(id) {
+    if (id) return User.findOne({attributes: {exclude: ['password']}, where: {id}});
+    else return User.findAll({attributes: {exclude: ['password']}});
   },
 
   create(username, password) {
@@ -26,5 +23,14 @@ module.exports = ({User}) => ({
     if (!user) return;
     const deletedCount = await user.destroy();
     if (deletedCount) return user;
+  },
+
+  async login(username, password) {
+    const user = await User.findOne({where: {username}});
+    if (!user) return {ok: false, error: 'NOT_FOUND'};
+    const isValidPassword = await user.checkPassword(password);
+    if (!isValidPassword) return {ok: false, error: 'BAD_PASSWORD'};
+    const {password: _, ...sanitizedUser} = user.get();
+    return {ok: true, user: sanitizedUser};
   },
 });

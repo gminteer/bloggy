@@ -9,7 +9,7 @@ module.exports = (sequelize) => {
   const hbs = exphbs.create();
   const models = require('./models')(sequelize);
   const services = require('./services')(models, sequelize);
-  const routes = require('./controllers')(models, sequelize, services);
+  const routes = require('./controllers')(services);
 
   app.use(
     session({
