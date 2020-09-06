@@ -49,7 +49,7 @@ module.exports = ({User, Post}) => {
     },
     async update(id, title, body) {
       const post = await Post.findOne({where: {id}});
-      wif (!post) return;
+      if (!post) return;
       if (title) post.title = title;
       if (body) post.body = body;
       await post.save();
