@@ -1,7 +1,10 @@
 module.exports = ({User}) => ({
   async get(id) {
     if (id) {
-      const user = await User.findOne({attributes: {exclude: ['password']}, where: {id}});
+      const user = await User.findOne({
+        attributes: {exclude: ['password']},
+        where: {id: Number(id)},
+      });
       return user.get({plain: true});
     } else {
       const users = await User.findAll({attributes: {exclude: ['password']}});

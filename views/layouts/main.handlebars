@@ -9,11 +9,11 @@
 
 <body>
   <header>
-    <h1>Bloggy!</h1>
+    <h1><a href="/">Bloggy!</a></h1>
     <nav>
       <ul>
-        {{#if loggedIn}}
-        <li><a href="/users/{{user.id}}">{{user.username}}</a></li>
+        {{#if isLoggedIn}}
+        <li><a href="/users/{{currentUser.id}}">{{currentUser.username}}</a></li>
         <li><a href="/logout">Log Out</a></li>
         {{else}}
         <li><a href="/login">Log In</a></li>

@@ -1,3 +1,6 @@
+{{#if isLoggedIn}}
+<a href="/posts">Submit new post</a>
+{{/if}}
 {{#each post}}
-{{> post}}
+{{> view_post}}
 {{/each}}

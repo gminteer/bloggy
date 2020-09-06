@@ -3,27 +3,25 @@ const router = require('express').Router();
 module.exports = ({userSvc, postSvc}, {auth}) => {
   router.get('/', async (req, res) => {
     return res.render('index', {
+      isLoggedIn: req.session.isLoggedIn,
+      currentUser: req.session.user,
       post: await postSvc.get(),
-      loggedIn: req.session.isLoggedIn,
-      user: req.session.user,
     });
   });
   router.get('/posts/:id', async (req, res) => {
-    const post = await postSvc.get(req.params);
     return res.render('single', {
-      post,
-      loggedIn: req.session.isLoggedIn,
-      user: req.session.user,
+      isLoggedIn: req.session.isLoggedIn,
+      currentUser: req.session.user,
+      post: await postSvc.get(req.params),
     });
   });
   router.get('/users/:id', async (req, res) => {
+    const user = await userSvc.get(req.params.id);
     const post = await postSvc.get({user_id: req.params.id});
-    // storing a Date object in a session turns it into an ISO string
-    const user = {...req.session.user};
-    user.created_at = new Date(user.createdAt); // also not sure why it's getting camelCased here...
     return res.render('user', {
+      isLoggedIn: req.session.isLoggedIn,
+      currentUser: req.session.user,
       post,
-      loggedIn: req.session.isLoggedIn,
       user,
     });
   });
@@ -36,5 +34,12 @@ module.exports = ({userSvc, postSvc}, {auth}) => {
     req.session.destroy(() => res.redirect('/'));
   });
 
+  router.get('/posts', (req, res) => {
+    if (!req.session.isLoggedIn) return res.redirect('/login');
+    return res.render('post', {
+      isLoggedIn: req.session.isLoggedIn,
+      currentUser: req.session.currentUser,
+    });
+  });
   return router;
 };

@@ -7,9 +7,11 @@
   </section>
   <p>{{body}}</p>
   <section class="footer">
+    {{#if commentCount}}
     <p>{{commentCount}} {{pluralize "comment" commentCount}}</p>
+    {{/if}}
   </section>
   {{#each comments}}
-  {{> post}}
+  {{> view_post}}
   {{/each}}
 </div>

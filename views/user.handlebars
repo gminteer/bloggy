@@ -1,10 +1,13 @@
 <div>
   <h2>{{user.username}}</h2>
-  <p>Member for {{relative_time user.created_at}}</p>
+  <p>Member for {{relative_time user.createdAt}}</p>
 </div>
+{{#if isLoggedIn}}
+<a href="/post">Submit new post</a>
+{{/if}}
 <div>
   <h3>Posts</h3>
   {{#each post}}
-  {{> post}}
+  {{> view_post}}
   {{/each}}
 </div>
