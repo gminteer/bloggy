@@ -1,17 +1,31 @@
-<div class="card">
-  <section class="card-header">
-    <a href="/posts/{{id}}">
-      <h2 class="card-header-title">{{title}}</h2>
-    </a>
-    <p>by {{user.username}} - {{relative_time created_at}}ago</p>
-  </section class="card-content">
+<div class="card post-card my-2">
+  <section class="card-header py-1">
+    <h2 class="title is-5 px-2 my-1"><a href="/posts/{{id}}">{{title}}</a></h2>
+    <p class="subtitle is-6 px-2 my-1">by <a href="/users/{{user_id}}">{{user.username}}</a> -
+      {{relative_time created_at}}ago</p>
+  </section>
   <pre>{{body}}</pre>
   <section class="card-footer">
     {{#if commentCount}}
-    <p>{{commentCount}} {{pluralize "comment" commentCount}}</p>
+    <span class="px-2">{{commentCount}} {{pluralize "comment" commentCount}}</span>
+    {{else}}
+    <span class="px-2"></span>
     {{/if}}
+    <div>
+      {{#if session.isLoggedIn}}
+      <span class="px-2"><a href="/posts/{{id}}#comment">Reply</a></span>
+      {{/if}}
+      {{#if (owns_post session.user this)}}
+      <span class="px-2"><a href="/edit/{{id}}">Edit</a></span>
+      <span class="px-2"><a data-id="{{id}}" id="del-{{id}}">Delete</a></span>
+      {{/if}}
+    </div>
   </section>
-  {{#each comments}}
-  {{> view_post}}
-  {{/each}}
 </div>
+{{#each comments}}
+<div class="columns is-mobile is-centered my-0">
+  <div class="column is-offset-1">
+    {{> view_post session=../session}}
+  </div>
+</div>
+{{/each}}

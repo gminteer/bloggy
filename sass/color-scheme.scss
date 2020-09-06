@@ -8,11 +8,11 @@
 }
 
 $color-scheme: (
-  'imperial-red': #e63946,
-  'honeydew': #f1faee,
-  'powder-blue': #a8dadc,
-  'celadon-blue': #457b9d,
-  'prussian-blue': #1d3557,
+  'melon': #ffa69e,
+  'eggshell': #faf3dd,
+  'aero-blue': #b8f2e6,
+  'powder-blue': #aed9e0,
+  'black-coral': #5e6472,
 );
 
 @each $name, $color in $color-scheme {

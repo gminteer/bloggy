@@ -1,6 +1,15 @@
-{{> view_post this.post}}
-{{#if session.isLoggedIn}}
-{{> create_post this.post}}
-{{else}}
-<p><a href="/login">Log in</a> or <a href="/signup">sign up</a> to leave a comment.</p>
-{{/if}}
+<div class="container">
+  {{#unless session.isLoggedIn}}
+  <div class="columns is-centered">
+    <div class="column is-one-third">
+      <div class="notification is-warning is-one-third">
+        <a href="/login">Log in</a> or <a href="/signup">sign up</a> to leave a comment.
+      </div>
+    </div>
+  </div>
+  {{/unless}}
+  {{> view_post this.post session=session}}
+  {{#if session.isLoggedIn}}
+  {{> create_post this.post}}
+  {{/if}}
+</div>

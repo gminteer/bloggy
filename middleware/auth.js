@@ -14,7 +14,7 @@ module.exports = ({postSvc}) => ({
   },
   async mustOwnPost(req, res, next) {
     if (!req.session.isLoggedIn) return res.sendStatus(403);
-    const post = await postSvc.get(req.params.id, 0);
+    const post = await postSvc.get({id: req.params.id, depth: 0});
     if (post.user_id !== req.session.user.id) return res.sendStatus(403);
     next();
   },

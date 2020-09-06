@@ -21,4 +21,7 @@ module.exports = {
   is_login(loginType) {
     return loginType === 'login';
   },
+  owns_post(user, post) {
+    return user && user.id === post.user_id;
+  },
 };

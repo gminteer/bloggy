@@ -31,10 +31,14 @@ module.exports = ({userSvc, postSvc}, {auth}) => {
     if (!req.session.isLoggedIn) return res.redirect('/');
     req.session.destroy(() => res.redirect('/'));
   });
-
-  router.get('/posts', (req, res) => {
+  router.get('/submit', (req, res) => {
     if (!req.session.isLoggedIn) return res.redirect('/login');
     return res.render('post');
+  });
+  router.get('/edit/:id', async (req, res) => {
+    if (!req.session.isLoggedIn) return res.redirect('/login');
+    const post = await postSvc.get({id: req.params.id});
+    return res.render('edit', post);
   });
   return router;
 };

@@ -1,29 +1,23 @@
 <div class="card accent" id="comment">
   <div class="card-header">
-    <h2 class="title is-4 px-1 py-2">
-      {{#if id}}
-      Add comment
-      {{else}}
-      Submit new Post
-      {{/if}}
-    </h2>
+    <h2 class="title is-4 px-1 py-2">Edit post</h2>
   </div>
   <div class="card-content">
-    <form id="post" data-parent="{{id}}">
+    <form id="post" data-id="{{id}}">
       <div class="field">
         <label class="label" for="title">Title</label>
         <div class="control">
-          <input class="input" type="text" id="title" name="title">
+          <input class="input" type="text" id="title" name="title" value="{{title}}">
         </div>
       </div>
       <div class="field">
         <label class="label" for="body">Body</label>
         <div class="control">
-          <textarea class="textarea" id="body" name="body"></textarea>
+          <textarea class="textarea" id="body" name="body">{{body}}</textarea>
         </div>
       </div>
       <input class="button" type="submit" value="Submit">
     </form>
   </div>
 </div>
-<script src="/js/post.js"></script>
+<script src="/js/edit.js"></script>

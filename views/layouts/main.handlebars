@@ -9,28 +9,32 @@
 </head>
 
 <body>
-  <nav class="level is-mobile">
+  <nav class="level is-mobile has-background-black-coral py-2">
     <div class="level-left">
       <div class="level-item">
-        <h1 class="title is-1"><a href="/">Bloggy!</a></h1>
+        <h1 class="title is-1 px-2 has-text-black"><a href="/">Bloggy!</a></h1>
       </div>
     </div>
     <div class="level-right">
       {{#if session.isLoggedIn}}
       <div class="level-item">
-        <a class="subtitle is-2" href="/users/{{session.user.id}}">{{session.user.username}}</a>
+        <h2 class="subtitle is-2 px-2"><a href="/users/{{session.user.id}}">{{session.user.username}}</a></h2>
       </div>
       <div class="level-item">
-        <a class="subtitle is-4" href="/logout">Log Out</a>
+        <p class="subtitle is-5 px-2"><a href="/logout">Log Out</a></p>
       </div>
       {{else}}
       <div class="level-item">
-        <a class="subtitle is-2" href="/login">Log In</a>
+        <a class="subtitle is-2 px-2 has-text-white" href="/login">Log In</a>
       </div>
       {{/if}}
     </div>
   </nav>
-  {{{body}}}
+  <div class="columns is-centered">
+    <div class="column is-11">
+      {{{body}}}
+    </div>
+  </div>
 </body>
 
 </html>

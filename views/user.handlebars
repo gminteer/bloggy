@@ -1,13 +1,21 @@
-<div>
-  <h2>{{user.username}}</h2>
-  <p>Member for {{relative_time user.createdAt}}</p>
+<div class="columns is-centered">
+  <div class="column is-half">
+    <div class="card accent">
+      <div class="card-header">
+        <h2 class="title is-3">{{user.username}}</h2>
+      </div>
+      <div class="card-content">
+        <p>Member for {{relative_time user.createdAt}}</p>
+      </div>
+      <div class="card-footer">
+        {{#if session.isLoggedIn}}
+        <a class="px-2" href="/submit">Submit new post</a>
+        {{/if}}
+        <a class="px-2" href="#delete">Delete account</a>
+      </div>
+    </div>
+  </div>
 </div>
-{{#if session.isLoggedIn}}
-<a href="/posts">Submit new post</a>
-{{/if}}
-<div>
-  <h3>Posts</h3>
-  {{#each post}}
-  {{> view_post}}
-  {{/each}}
-</div>
+{{#each post}}
+{{> view_post session=../session}}
+{{/each}}

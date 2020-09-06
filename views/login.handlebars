@@ -1,13 +1,36 @@
-{{#if (is_login loginType)}}
-<p>New user? <a href="/signup">Create an account here.</a></p>
-{{else}}
-<p>Already have an account? <a href="/login">Login here.</a></p>
-{{/if}}
-<form id="login" data-login-type="{{loginType}}">
-  <label for="username">Username:</label>
-  <input type="text" autocomplete="username" id="username" name="username">
-  <label for="password">Password:</label>
-  <input type="password" autocomplete="current-password" id="password" name="password">
-  <input type="submit" value="Submit">
-</form>
+<div class="card accent">
+  <div class="card-header">
+    <h2 class="title is-2 py-2">
+      {{#if (is_login loginType)}}
+      Log In
+      {{else}}
+      Sign Up
+      {{/if}}
+    </h2>
+  </div>
+  <div class="card-content">
+    <form id="login" data-login-type="{{loginType}}">
+      <div class="field">
+        <label for="username">Username:</label>
+        <div class="control">
+          <input type="text" autocomplete="username" id="username" name="username">
+        </div>
+      </div>
+      <div class="field">
+        <label for="password">Password:</label>
+        <div class="control">
+          <input type="password" autocomplete="current-password" id="password" name="password">
+        </div>
+      </div>
+      <input class="button" type="submit" value="Submit">
+    </form>
+  </div>
+  <div class="card-footer login-footer">
+    {{#if (is_login loginType)}}
+    <p>New user? <a href="/signup">Create an account here.</a></p>
+    {{else}}
+    <p>Already have an account? <a href="/login">Login here.</a></p>
+    {{/if}}
+  </div>
+</div>
 <script src="/js/login.js"></script>

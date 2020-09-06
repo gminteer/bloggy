@@ -1,0 +1,76 @@
+@import './color-scheme.scss';
+
+$background-color: map-get(
+  $map: $color-scheme,
+  $key: 'eggshell',
+);
+$background-color-bis: adjust-color(
+  $color: $background-color,
+  $lightness: -4%,
+);
+$header-color: map-get(
+  $map: $color-scheme,
+  $key: 'black-coral',
+);
+$accent-header-color: map-get(
+  $map: $color-scheme,
+  $key: 'melon',
+);
+$header-text-color: white;
+$text-color: black;
+$border-radius: 0.5em;
+
+.card {
+  .card-header,
+  .card-footer {
+    p {
+      color: $header-text-color;
+    }
+    background-color: $header-color;
+    color: $header-text-color;
+  }
+  .card-header {
+    border-radius: $border-radius $border-radius 0 0;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+  .card-footer {
+    border-radius: 0 0 $border-radius $border-radius;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+  pre {
+    background-color: $background-color;
+    color: $text-color;
+  }
+  border-radius: $border-radius;
+  form {
+    width: 100%;
+    input,
+    textarea {
+      width: 100%;
+      background-color: $background-color-bis;
+    }
+  }
+}
+
+.card.accent {
+  .card-header,
+  .card-footer {
+    background-color: $accent-header-color;
+    color: $text-color;
+    h2 {
+      color: $text-color;
+    }
+  }
+  .card-footer.login-footer {
+    justify-content: center;
+  }
+  .card-header {
+    justify-content: center;
+  }
+  .card-content {
+    background-color: $background-color;
+    color: $text-color;
+  }
+}
