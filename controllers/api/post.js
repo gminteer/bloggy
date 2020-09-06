@@ -16,10 +16,8 @@ module.exports = ({postSvc}, {auth}, handleErr) => {
   router.get('/:id', async (req, res) => {
     try {
       const {id} = req.params;
-      const commentDepth = req.query.comment_depth
-        ? Math.min(Number(req.query.comment_depth), 6)
-        : 6;
-      const post = await postSvc.get(id, commentDepth);
+      const depth = req.query.depth ? Math.min(Number(req.query.depth), 6) : 6;
+      const post = await postSvc.get({id, depth});
       if (!post) return res.status(404).json({message: `No post found with id: "${id}"`});
       return res.json(post);
     } catch (err) {

@@ -1,0 +1,15 @@
+<div>
+  <section class="header">
+    <a href="/posts/{{id}}">
+      <h2>{{title}}</h2>
+    </a>
+    <p>by {{user.username}} - {{relative_time created_at}}ago</p>
+  </section>
+  <p>{{body}}</p>
+  <section class="footer">
+    <p>{{commentCount}} {{pluralize "comment" commentCount}}</p>
+  </section>
+  {{#each comments}}
+  {{> post}}
+  {{/each}}
+</div>

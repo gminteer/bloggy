@@ -2,16 +2,16 @@ module.exports = ({User}) => ({
   async get(id) {
     if (id) {
       const user = await User.findOne({attributes: {exclude: ['password']}, where: {id}});
-      return user.get();
+      return user.get({plain: true});
     } else {
       const users = await User.findAll({attributes: {exclude: ['password']}});
-      return users.map((user) => user.get());
+      return users.map((user) => user.get({plain: true}));
     }
   },
 
   async create(username, password) {
     const user = await User.create({username, password});
-    return user.get();
+    return user.get({plain: true});
   },
 
   async update(id, username, password) {
@@ -20,7 +20,7 @@ module.exports = ({User}) => ({
     if (username) user.username = username;
     if (password) user.password = password;
     await user.save();
-    const {password: _, ...sanitizedUser} = user.get();
+    const {password: _, ...sanitizedUser} = user.get({plain: true});
     return sanitizedUser;
   },
 
@@ -28,7 +28,7 @@ module.exports = ({User}) => ({
     const user = await User.findOne({exclude: ['password'], where: {id}});
     if (!user) return;
     const deletedCount = await user.destroy();
-    const {password: _, ...sanitizedUser} = user.get();
+    const {password: _, ...sanitizedUser} = user.get({plain: true});
     if (deletedCount) return sanitizedUser;
   },
 
@@ -37,7 +37,7 @@ module.exports = ({User}) => ({
     if (!user) return {ok: false, error: 'NOT_FOUND'};
     const isValidPassword = await user.checkPassword(password);
     if (!isValidPassword) return {ok: false, error: 'BAD_PASSWORD'};
-    const {password: _, ...sanitizedUser} = user.get();
+    const {password: _, ...sanitizedUser} = user.get({plain: true});
     return {ok: true, user: sanitizedUser};
   },
 });

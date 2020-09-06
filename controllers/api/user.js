@@ -47,6 +47,7 @@ module.exports = ({userSvc}, {auth}, handleErr) => {
   router.post('/login', auth.mustNotBeLoggedIn, async (req, res) => {
     try {
       const {username, password} = req.body;
+      if (!username || !password) return res.status(400).json({message: 'Missing required fields'});
       const login = await userSvc.login(username, password);
       if (!login.ok) {
         switch (login.error) {

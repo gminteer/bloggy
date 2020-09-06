@@ -5,7 +5,7 @@ module.exports = ({User, Post}) => {
     as: 'comments',
     foreignKey: 'parent_id',
     attributes: ['id', 'title', 'body', 'created_at'],
-    include: [{model: User, attributes: ['username']}],
+    include: [{model: User, attributes: ['username', 'id']}],
   });
   /**
    * nests comment include blocks (up to depth)
@@ -27,14 +27,21 @@ module.exports = ({User, Post}) => {
   }
 
   return {
-    async get(id = null, depth = 6) {
-      if (!id) {
+    async get({id = null, user_id = null, depth = 6} = {}) {
+      if (!id || user_id) {
+        const where = user_id ? {user_id} : {parent_id: null};
         const posts = await Post.findAll({
-          where: {parent_id: null},
+          where,
           attributes: ['id', 'user_id', 'title', 'body', 'created_at'],
-          include: [{model: User, attributes: ['username']}],
+          include: [{model: User, attributes: ['username', 'id']}],
         });
-        return posts.map((post) => post.get());
+        const processedPosts = [];
+        for (const post of posts) {
+          const processedPost = post.get({plain: true});
+          processedPost.commentCount = await post.countComments();
+          processedPosts.push(processedPost);
+        }
+        return processedPosts;
       }
       const params = {
         where: {id},
@@ -43,12 +50,12 @@ module.exports = ({User, Post}) => {
       };
       if (depth) params.include.push(getComments(depth));
       const post = await Post.findOne(params);
-      return post.get();
+      return post.get({plain: true});
     },
     async create(post = {user_id: '', title: '', body: '', parent_id: null}) {
-      if (post.parent_id && !(await this.get(post.parent_id, 0))) return;
+      if (post.parent_id && !(await this.get({id: post.parent_id, depth: 0}))) return;
       const newPost = await Post.create(post);
-      return newPost.get();
+      return newPost.get({plain: true});
     },
     async update(id, title, body) {
       const post = await Post.findOne({where: {id}});
@@ -56,13 +63,13 @@ module.exports = ({User, Post}) => {
       if (title) post.title = title;
       if (body) post.body = body;
       await post.save();
-      return post.get();
+      return post.get({plain: true});
     },
     async delete(id) {
       const post = await Post.findOne({where: {id}});
       if (!post) return;
       await post.destroy();
-      return post.get();
+      return post.get({plain: true});
     },
   };
 };

@@ -45,7 +45,7 @@ module.exports = {
       files: ['public/**/*.js', 'static/**/*.js'],
       plugins: ['compat', ...basePlugins],
       env: {browser: true, ...baseEnv},
-      extends: ['plugin:compat/recommended', ...basePlugins],
+      extends: basePlugins,
     },
   ],
   parserOptions: {

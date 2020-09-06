@@ -9,14 +9,14 @@
 
 <body>
   <header>
-    <h1>Threaddy!</h1>
+    <h1>Bloggy!</h1>
     <nav>
       <ul>
         {{#if loggedIn}}
-        <li><a href="#">{{username}}</a></li>
-        <li><a hred="#">Log Out</a></li>
+        <li><a href="/users/{{user.id}}">{{user.username}}</a></li>
+        <li><a href="/logout">Log Out</a></li>
         {{else}}
-        <li><a href="#">Log In</a></li>
+        <li><a href="/login">Log In</a></li>
         {{/if}}
       </ul>
     </nav>
