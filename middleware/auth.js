@@ -8,10 +8,12 @@ module.exports = ({postSvc}) => ({
     next();
   },
   mustOwnEndpoint(req, res, next) {
+    if (!req.session.isLoggedIn) return res.sendStatus(403);
     if (req.params.id !== req.session.user.id.toString()) return res.sendStatus(403);
     next();
   },
   async mustOwnPost(req, res, next) {
+    if (!req.session.isLoggedIn) return res.sendStatus(403);
     const post = await postSvc.get(req.params.id, 0);
     if (post.user_id !== req.session.user.id) return res.sendStatus(403);
     next();

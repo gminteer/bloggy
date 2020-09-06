@@ -1,11 +1,17 @@
 module.exports = ({User}) => ({
-  get(id) {
-    if (id) return User.findOne({attributes: {exclude: ['password']}, where: {id}});
-    else return User.findAll({attributes: {exclude: ['password']}});
+  async get(id) {
+    if (id) {
+      const user = await User.findOne({attributes: {exclude: ['password']}, where: {id}});
+      return user.get();
+    } else {
+      const users = await User.findAll({attributes: {exclude: ['password']}});
+      return users.map((user) => user.get());
+    }
   },
 
-  create(username, password) {
-    return User.create({username, password});
+  async create(username, password) {
+    const user = await User.create({username, password});
+    return user.get();
   },
 
   async update(id, username, password) {
@@ -22,7 +28,8 @@ module.exports = ({User}) => ({
     const user = await User.findOne({exclude: ['password'], where: {id}});
     if (!user) return;
     const deletedCount = await user.destroy();
-    if (deletedCount) return user;
+    const {password: _, ...sanitizedUser} = user.get();
+    if (deletedCount) return sanitizedUser;
   },
 
   async login(username, password) {

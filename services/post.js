@@ -27,13 +27,14 @@ module.exports = ({User, Post}) => {
   }
 
   return {
-    get(id = null, depth = 6) {
+    async get(id = null, depth = 6) {
       if (!id) {
-        return Post.findAll({
+        const posts = await Post.findAll({
           where: {parent_id: null},
           attributes: ['id', 'user_id', 'title', 'body', 'created_at'],
           include: [{model: User, attributes: ['username']}],
         });
+        return posts.map((post) => post.get());
       }
       const params = {
         where: {id},
@@ -41,11 +42,13 @@ module.exports = ({User, Post}) => {
         include: [{model: User, attributes: ['username']}],
       };
       if (depth) params.include.push(getComments(depth));
-      return Post.findOne(params);
+      const post = await Post.findOne(params);
+      return post.get();
     },
     async create(post = {user_id: '', title: '', body: '', parent_id: null}) {
       if (post.parent_id && !(await this.get(post.parent_id, 0))) return;
-      return Post.create(post);
+      const newPost = await Post.create(post);
+      return newPost.get();
     },
     async update(id, title, body) {
       const post = await Post.findOne({where: {id}});
@@ -53,13 +56,13 @@ module.exports = ({User, Post}) => {
       if (title) post.title = title;
       if (body) post.body = body;
       await post.save();
-      return post;
+      return post.get();
     },
     async delete(id) {
       const post = await Post.findOne({where: {id}});
       if (!post) return;
       await post.destroy();
-      return post;
+      return post.get();
     },
   };
 };
