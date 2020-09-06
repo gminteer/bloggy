@@ -5,6 +5,7 @@ module.exports = ({User}) => ({
         attributes: {exclude: ['password']},
         where: {id: Number(id)},
       });
+      if (!user) return;
       return user.get({plain: true});
     } else {
       const users = await User.findAll({attributes: {exclude: ['password']}});

@@ -5,22 +5,31 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Document</title>
+  <link rel="stylesheet" href="/css/style.css">
 </head>
 
 <body>
-  <header>
-    <h1><a href="/">Bloggy!</a></h1>
-    <nav>
-      <ul>
-        {{#if isLoggedIn}}
-        <li><a href="/users/{{currentUser.id}}">{{currentUser.username}}</a></li>
-        <li><a href="/logout">Log Out</a></li>
-        {{else}}
-        <li><a href="/login">Log In</a></li>
-        {{/if}}
-      </ul>
-    </nav>
-  </header>
+  <nav class="level is-mobile">
+    <div class="level-left">
+      <div class="level-item">
+        <h1 class="title is-1"><a href="/">Bloggy!</a></h1>
+      </div>
+    </div>
+    <div class="level-right">
+      {{#if session.isLoggedIn}}
+      <div class="level-item">
+        <a class="subtitle is-2" href="/users/{{session.user.id}}">{{session.user.username}}</a>
+      </div>
+      <div class="level-item">
+        <a class="subtitle is-4" href="/logout">Log Out</a>
+      </div>
+      {{else}}
+      <div class="level-item">
+        <a class="subtitle is-2" href="/login">Log In</a>
+      </div>
+      {{/if}}
+    </div>
+  </nav>
   {{{body}}}
 </body>
 

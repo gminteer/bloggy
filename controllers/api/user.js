@@ -2,13 +2,13 @@ const router = require('express').Router();
 
 module.exports = ({userSvc}, {auth}, handleErr) => {
   // GET / (get all users)
-  router.get('/', async (_, res) => {
+  router.get('/', async (req, res) => {
     try {
       const users = await userSvc.get();
       if (users.length < 1) return res.status(404).json({message: 'No users in database'});
       return res.json(users);
     } catch (err) {
-      handleErr(err);
+      handleErr(req, res, err);
     }
   });
 
@@ -20,7 +20,7 @@ module.exports = ({userSvc}, {auth}, handleErr) => {
       if (!user) return res.status(404).json({message: `No user found with id: "${id}"`});
       return res.json(user);
     } catch (err) {
-      handleErr(err);
+      handleErr(req, res, err);
     }
   });
 
@@ -39,7 +39,7 @@ module.exports = ({userSvc}, {auth}, handleErr) => {
           .json({user: {id, username}, message: 'Login successful.'});
       });
     } catch (err) {
-      handleErr(err);
+      handleErr(req, res, err);
     }
   });
 
@@ -63,7 +63,7 @@ module.exports = ({userSvc}, {auth}, handleErr) => {
         return res.json({user: login.user, message: 'Login successful.'});
       });
     } catch (err) {
-      handleErr(err);
+      handleErr(req, res, err);
     }
   });
 
@@ -82,7 +82,7 @@ module.exports = ({userSvc}, {auth}, handleErr) => {
       if (!user) return res.status(404).json({message: `No user found with id: "${id}"`});
       return res.status(200).json({message: 'Update successful', user});
     } catch (err) {
-      handleErr(err);
+      handleErr(req, res, err);
     }
   });
 
@@ -102,7 +102,7 @@ module.exports = ({userSvc}, {auth}, handleErr) => {
       }
       req.session.destroy(() => res.status(200).json({message: 'User deleted', user}));
     } catch (err) {
-      handleErr(err);
+      handleErr(req, res, err);
     }
   });
   return router;

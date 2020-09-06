@@ -1,0 +1,20 @@
+@mixin color-helpers($name, $color) {
+  .has-background-#{$name} {
+    background-color: $color;
+  }
+  .has-text-#{$name} {
+    color: $color;
+  }
+}
+
+$color-scheme: (
+  'imperial-red': #e63946,
+  'honeydew': #f1faee,
+  'powder-blue': #a8dadc,
+  'celadon-blue': #457b9d,
+  'prussian-blue': #1d3557,
+);
+
+@each $name, $color in $color-scheme {
+  @include color-helpers($name, $color);
+}

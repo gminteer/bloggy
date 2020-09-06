@@ -8,7 +8,7 @@ module.exports = ({postSvc}, {auth}, handleErr) => {
       if (posts.length < 1) return res.status(404).json({message: 'No posts in database'});
       else return res.json(posts);
     } catch (err) {
-      handleErr(err);
+      handleErr(req, res, err);
     }
   });
 
@@ -21,7 +21,7 @@ module.exports = ({postSvc}, {auth}, handleErr) => {
       if (!post) return res.status(404).json({message: `No post found with id: "${id}"`});
       return res.json(post);
     } catch (err) {
-      handleErr(err);
+      handleErr(req, res, err);
     }
   });
   // POST / (create a top level post)
@@ -32,7 +32,7 @@ module.exports = ({postSvc}, {auth}, handleErr) => {
       const post = await postSvc.create({user_id, title, body});
       return res.json(post);
     } catch (err) {
-      handleErr(err);
+      handleErr(req, res, err);
     }
   });
   // POST /1 (create a comment (post with a parent post))
@@ -44,7 +44,7 @@ module.exports = ({postSvc}, {auth}, handleErr) => {
       const post = await postSvc.create({title, body, user_id, parent_id});
       return res.json(post);
     } catch (err) {
-      handleErr(err);
+      handleErr(req, res, err);
     }
   });
   // PUT /1 (change a post)
@@ -57,7 +57,7 @@ module.exports = ({postSvc}, {auth}, handleErr) => {
       if (!post) return res.status(404).json({message: `No post found with id: "${id}"`});
       return res.status(200).json({message: 'Post updated successfully', post});
     } catch (err) {
-      handleErr(err);
+      handleErr(req, res, err);
     }
   });
   // DELETE /1 (delete a post)
@@ -68,7 +68,7 @@ module.exports = ({postSvc}, {auth}, handleErr) => {
       if (!post) return res.status(404).json({message: `No post found with id: "${id}"`});
       return res.status(200).json({message: 'Post deleted successfully', post});
     } catch (err) {
-      handleErr(err);
+      handleErr(req, res, err);
     }
   });
 

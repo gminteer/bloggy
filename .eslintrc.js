@@ -28,7 +28,7 @@ module.exports = {
   },
   overrides: [
     {
-      files: ['__tests__/**/*', '__mocks__/**/*', 'test/**/*', 'util/**/*'],
+      files: ['__tests__/**/*', '__mocks__/**/*', 'test/**/*', 'util/**/*', 'postcss.config.js'],
       env: {node: true, 'jest/globals': true, ...baseEnv},
       plugins: ['node', 'jest', ...basePlugins],
       extends: [

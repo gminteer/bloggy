@@ -1,12 +1,12 @@
-<div>
-  <section class="header">
+<div class="card">
+  <section class="card-header">
     <a href="/posts/{{id}}">
-      <h2>{{title}}</h2>
+      <h2 class="card-header-title">{{title}}</h2>
     </a>
     <p>by {{user.username}} - {{relative_time created_at}}ago</p>
-  </section>
-  <p>{{body}}</p>
-  <section class="footer">
+  </section class="card-content">
+  <pre>{{body}}</pre>
+  <section class="card-footer">
     {{#if commentCount}}
     <p>{{commentCount}} {{pluralize "comment" commentCount}}</p>
     {{/if}}

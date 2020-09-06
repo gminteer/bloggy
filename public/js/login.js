@@ -5,7 +5,8 @@ login.addEventListener('submit', async (event) => {
   event.preventDefault();
   const username = usernameEl.value.trim();
   const password = passwordEl.value;
-  const response = await fetch('/api/users/login', {
+  const endpoint = login.dataset.loginType === 'login' ? '/api/users/login' : '/api/users';
+  const response = await fetch(endpoint, {
     method: 'POST',
     headers: {'Content-Type': 'application/json'},
     body: JSON.stringify({username, password}),

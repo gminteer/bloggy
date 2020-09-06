@@ -50,6 +50,7 @@ module.exports = ({User, Post}) => {
       };
       if (depth) params.include.push(getComments(depth));
       const post = await Post.findOne(params);
+      if (!post) return;
       return post.get({plain: true});
     },
     async create(post = {user_id: '', title: '', body: '', parent_id: null}) {

@@ -1,0 +1,15 @@
+@charset "utf-8";
+@import '~bulma/sass/utilities/initial-variables';
+@import './color-scheme.scss';
+
+// change Bulma defaults
+
+$tablet: 768px;
+// $primary: map-get($map: $color-scheme, $key: "some-color");
+// $pimary-invert: $color
+// $scheme-main: map-get($map: $color-scheme, $key: "some-color");
+// $scheme-main-bis: adjust-color($color: $scheme-main, $lightness: -2%);
+// $scheme-main-ter: adjust-color($color: $scheme-main, $lightness: -4%);
+// $link: map-get($map: $color-scheme, $key: "some-color");
+
+@import '~bulma/bulma'; // Main styles / variables

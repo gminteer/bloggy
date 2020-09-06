@@ -1,1 +1,6 @@
 {{> view_post this.post}}
+{{#if session.isLoggedIn}}
+{{> create_post this.post}}
+{{else}}
+<p><a href="/login">Log in</a> or <a href="/signup">sign up</a> to leave a comment.</p>
+{{/if}}

@@ -17,4 +17,8 @@ module.exports = {
     }
     return formattedString;
   },
+
+  is_login(loginType) {
+    return loginType === 'login';
+  },
 };

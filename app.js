@@ -24,7 +24,9 @@ module.exports = (sequelize) => {
   );
   app.use(express.urlencoded({extended: true}));
   app.use(express.json());
+  app.use(express.static(path.join(__dirname, 'dist')));
   app.use(express.static(path.join(__dirname, 'public')));
+  app.use(middleware.handlebars.sessionLocals);
   app.use(routes);
 
   app.engine('handlebars', hbs.engine);
