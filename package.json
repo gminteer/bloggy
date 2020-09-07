@@ -1,43 +1,32 @@
 {
-  "name": "insert-name-here",
+  "name": "bloggy",
   "version": "1.0.0",
-  "description": "",
+  "description": "a simple threaded BBS",
   "engines": {
     "node": ">=12.18.3"
   },
   "main": "server.js",
   "scripts": {
-    "test": "jest",
-    "watch": "nodemon"
-  },
-  "jest": {
-    "collectCoverage": true,
-    "coverageReporters": [
-      "html"
-    ],
-    "coveragePathIgnorePatterns": [
-      "/node/modules"
-    ],
-    "testEnvironment": "node"
+    "test": "echo TODO: write tests && exit 1",
+    "watch": "nodemon",
+    "build": "webpack"
   },
   "nodemonConfig": {
     "ignore": [
       "db/**",
-      "**/__tests__/*",
-      "**/__mocks__/*",
       "public/**",
-      "views/**",
-      "util/**"
+      "views/**"
     ]
   },
-  "repository": "github:gminteer/insert-name-here",
+  "repository": "github:gminteer/bloggy",
   "author": "Greg Minteer <gminteer@gmail.com> (https://gminteer.github.io)",
   "license": "Apache-2.0",
   "bugs": {
-    "url": "https://github.com/gminteer/insert-name-here/issues"
+    "url": "https://github.com/gminteer/bloggy/issues"
   },
-  "homepage": "https://github.com/gminteer/insert-name-here#readme",
+  "homepage": "https://github.com/gminteer/bloggy#readme",
   "devDependencies": {
+    "@csstools/postcss-sass": "^4.0.0",
     "@fullhuman/postcss-purgecss": "^2.3.0",
     "autoprefixer": "^9.8.6",
     "bulma": "^0.9.0",
@@ -47,27 +36,21 @@
     "eslint-config-prettier": "^6.11.0",
     "eslint-plugin-compat": "^3.8.0",
     "eslint-plugin-import": "^2.22.0",
-    "eslint-plugin-jest": "^23.20.0",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-prettier": "^3.1.4",
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-security": "^1.4.0",
     "extract-loader": "^5.1.0",
     "file-loader": "^6.1.0",
-    "jest": "^26.4.2",
     "nodemon": "^2.0.4",
-    "postcss-cli": "^7.1.2",
     "postcss-loader": "^3.0.0",
     "prettier": "^2.1.1",
     "sass": "^1.26.10",
     "sass-loader": "^10.0.2",
-    "superagent": "^6.1.0",
-    "supertest": "^4.0.2",
     "webpack": "^4.44.1",
     "webpack-cli": "^3.3.12"
   },
   "dependencies": {
-    "@csstools/postcss-sass": "^4.0.0",
     "bcrypt": "^5.0.0",
     "connect-session-sequelize": "^7.0.1",
     "dotenv": "^8.2.0",
