@@ -43,6 +43,7 @@ module.exports = {
     },
     {
       files: ['public/**/*.js', 'static/**/*.js'],
+      globals: {bulmaToast: 'readonly'},
       plugins: ['compat', ...basePlugins],
       env: {browser: true, ...baseEnv},
       extends: basePlugins,

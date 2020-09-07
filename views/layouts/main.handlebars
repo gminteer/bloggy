@@ -5,6 +5,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Document</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.0/animate.min.css"
+    integrity="sha256-6hqHMqXTVEds1R8HgKisLm3l/doneQs+rS1a5NLmwwo=" crossorigin="anonymous">
   <link rel="stylesheet" href="/css/style.css">
 </head>
 
@@ -12,30 +14,33 @@
   <nav class="level is-mobile has-background-black-coral py-2">
     <div class="level-left">
       <div class="level-item">
-        <h1 class="title is-1 px-2 has-text-black"><a href="/">Bloggy!</a></h1>
+        <h1 class="title is-size-2-tablet is-size-4-mobile px-2 has-text-black"><a href="/">Bloggy!</a></h1>
       </div>
     </div>
     <div class="level-right">
       {{#if session.isLoggedIn}}
       <div class="level-item">
-        <h2 class="subtitle is-2 px-2"><a href="/users/{{session.user.id}}">{{session.user.username}}'s dashboard</a>
+        <h2 class="subtitle is-size-4-tablet is-size-6-mobile px-1"><a
+            href="/users/{{session.user.id}}">{{session.user.username}}'s dashboard</a>
         </h2>
       </div>
       <div class="level-item">
-        <p class="subtitle is-5 px-2"><a href="/logout">Log Out</a></p>
+        <p class="subtitle is-size-5-tablet is-size-7-mobile px-1"><a href="/logout">Log Out</a></p>
       </div>
       {{else}}
       <div class="level-item">
-        <a class="subtitle is-2 px-2 has-text-white" href="/login">Log In</a>
+        <a class="subtitle is-size-4-tablet is-size-6-mobile px-1 has-text-white" href="/login">Log In</a>
       </div>
       {{/if}}
     </div>
   </nav>
-  <div class="columns is-centered">
+  <div class="columns is-mobile is-centered">
     <div class="column is-11">
       {{{body}}}
     </div>
   </div>
+  <script src="https://cdn.jsdelivr.net/npm/bulma-toast@2.0.3/dist/bulma-toast.min.js"
+    integrity="sha256-YzTb7dMsWR7CxHWYmzGeUl6KEty3s8D5nhWYS2IAEYo=" crossorigin="anonymous"></script>
   <script src="/js/delete-post.js"></script>
 </body>
 

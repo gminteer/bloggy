@@ -1,6 +1,6 @@
 const router = require('express').Router();
 
-module.exports = ({userSvc, postSvc}, {auth}) => {
+module.exports = ({userSvc, postSvc}) => {
   router.get('/', async (req, res) => {
     return res.render('index', {
       post: await postSvc.get(),

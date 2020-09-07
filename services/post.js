@@ -34,7 +34,6 @@ module.exports = ({User, Post}) => {
       const comments = await post.getComments();
       for (const comment of comments) commentCount += await countComments(comment.id);
     }
-    console.log({id: post.id, parent: post.parent_id, commentCount});
     return commentCount;
   }
 

@@ -16,7 +16,7 @@ module.exports = (sequelize) => {
   app.use(
     session({
       secret: 'This is secret?',
-      cookie: {},
+      cookie: {maxAge: 1000 * 60 * 2}, // 2 minute expiration
       resave: false,
       saveUninitialized: true,
       store: new SequelizeStore({db: sequelize}),
