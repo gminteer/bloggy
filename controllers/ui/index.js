@@ -40,5 +40,8 @@ module.exports = ({userSvc, postSvc}, {auth}) => {
     const post = await postSvc.get({id: req.params.id});
     return res.render('edit', post);
   });
+  router.get('/delete-user', (req, res) => {
+    return res.render('delete_user');
+  });
   return router;
 };

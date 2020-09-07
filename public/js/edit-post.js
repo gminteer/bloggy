@@ -1,4 +1,6 @@
-const deleteEl = document.querySelector('#delete');
+const post = document.querySelector('#post');
+const titleEl = document.querySelector('#title');
+const bodyEl = document.querySelector('#body');
 post.addEventListener('submit', async (event) => {
   event.preventDefault();
   const title = titleEl.value.trim();
@@ -13,6 +15,6 @@ post.addEventListener('submit', async (event) => {
     console.error(data);
   } else {
     console.info(data);
-    location.assign(`/posts/${post.dataset.id}`);
+    location.assign(document.referrer);
   }
 });

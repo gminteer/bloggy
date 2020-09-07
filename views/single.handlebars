@@ -8,7 +8,7 @@
     </div>
   </div>
   {{/unless}}
-  {{> view_post this.post session=session}}
+  {{> view_post this.post session=this.session}}
   {{#if session.isLoggedIn}}
   {{> create_post this.post}}
   {{/if}}

@@ -18,7 +18,8 @@
     <div class="level-right">
       {{#if session.isLoggedIn}}
       <div class="level-item">
-        <h2 class="subtitle is-2 px-2"><a href="/users/{{session.user.id}}">{{session.user.username}}</a></h2>
+        <h2 class="subtitle is-2 px-2"><a href="/users/{{session.user.id}}">{{session.user.username}}'s dashboard</a>
+        </h2>
       </div>
       <div class="level-item">
         <p class="subtitle is-5 px-2"><a href="/logout">Log Out</a></p>
@@ -35,6 +36,7 @@
       {{{body}}}
     </div>
   </div>
+  <script src="/js/delete-post.js"></script>
 </body>
 
 </html>

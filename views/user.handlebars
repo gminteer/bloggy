@@ -11,11 +11,11 @@
         {{#if session.isLoggedIn}}
         <a class="px-2" href="/submit">Submit new post</a>
         {{/if}}
-        <a class="px-2" href="#delete">Delete account</a>
+        <a class="px-2" href="/delete-user">Delete account</a>
       </div>
     </div>
   </div>
 </div>
 {{#each post}}
-{{> view_post session=../session}}
+{{> view_post session=../session summary="true"}}
 {{/each}}

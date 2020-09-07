@@ -13,7 +13,11 @@
       <div class="field">
         <label class="label" for="title">Title</label>
         <div class="control">
+          {{#if id}}
+          <input class="input" type="text" id="title" name="title" value="comment">
+          {{else}}
           <input class="input" type="text" id="title" name="title">
+          {{/if}}
         </div>
       </div>
       <div class="field">
@@ -26,4 +30,4 @@
     </form>
   </div>
 </div>
-<script src="/js/post.js"></script>
+<script src="/js/create-post.js"></script>
